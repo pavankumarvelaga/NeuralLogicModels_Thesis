@@ -142,13 +142,13 @@ def main():
                         help='GNN gin, gin-virtual, or gcn, or gcn-virtual (default: gin-virtual)')
     parser.add_argument('--drop_ratio', type=float, default=0.5,
                         help='dropout ratio (default: 0.5)')
-    parser.add_argument('--logical_reg', type=float, default=0.1,
-                        help='dropout ratio (default: 0.1)')    
+    parser.add_argument('--logical_reg', type=float, default=0.15,
+                        help='dropout ratio (default: 0.15)')    
     parser.add_argument('--num_layer_gnn', type=int, default=5,
                         help='number of GNN message passing layers (default: 5)')
     parser.add_argument('--emb_dim', type=int, default=300,
                         help='dimensionality of hidden units in GNNs (default: 300)')
-    parser.add_argument('--batch_size', type=int, default=32,
+    parser.add_argument('--batch_size', type=int, default=64,
                         help='input batch size for training (default: 32)')
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train (default: 100)')
@@ -220,7 +220,10 @@ def main():
     valid_curve = []
     test_curve = []
     train_curve = []
-
+    
+    pth = './init_weights/GLN_model_5_1_0.15_logical_gcn-0.5329-0.4907'
+    model.load_state_dict(torch.load(pth))
+    
     for epoch in range(1, args.epochs + 1):
         print("=====Epoch {}".format(epoch))
         print('Training...')
@@ -248,8 +251,8 @@ def main():
     # print('Best validation score: {}'.format(valid_curve[best_val_epoch]))
     # print('Test score: {}'.format(test_curve[best_val_epoch]))
 
-        torch.save({'Val': valid_perf, 'Test': test_perf, 'Train': train_perf, 'BestTrain': train_perf}, "./Models_Feb17_logic_v3/"+args.filename+"_"+str(args.num_layer_gnn)+"_"+"2"+"_"+str(epoch)+"_"+args.graph_pooling+"_"+args.gnn+"-"+str(round(valid_perf,4))+"-"+str(round(test_perf,4)))
-        torch.save(model.state_dict(),"./Models_Feb17_logic_v3_models/"+args.filename+"_"+str(args.num_layer_gnn)+"_"+"2"+"_"+str(epoch)+"_"+args.graph_pooling+"_"+args.gnn+"-"+str(round(valid_perf,4))+"-"+str(round(test_perf,4)))
+        torch.save({'Val': valid_perf, 'Test': test_perf, 'Train': train_perf, 'BestTrain': train_perf}, "./init_model_exp_r/"+args.filename+"_"+str(args.num_layer_gnn)+"_"+"2"+"_"+str(epoch)+"_"+args.graph_pooling+"_"+args.gnn+"-"+str(round(valid_perf,4))+"-"+str(round(test_perf,4)))
+        torch.save(model.state_dict(),"./init_models_exp/"+args.filename+"_"+str(args.num_layer_gnn)+"_"+"2"+"_"+str(epoch)+"_"+args.graph_pooling+"_"+args.gnn+"-"+str(round(valid_perf,4))+"-"+str(round(test_perf,4)))
 
 if __name__ == "__main__":
     main()
